@@ -1180,33 +1180,26 @@ const snakes = {
 
 function login(){
 
-    const dno = document.getElementById("dno").value
-        .trim()
-        .toUpperCase();
-
-    const password = document.getElementById("password").value
-        .trim()
-        .toUpperCase();
-
+   const dno = document.getElementById("dno").value.trim();
+const password = document.getElementById("password").value.trim();
    /* HOST LOGINS */
+
+/* HOST LOGIN */
 
 const hosts = {
     "HOST1": "Finance@123",
     "HOST2": "Finance@456",
-    "HOST3": "Finance@789"
+    "HOST3": "Finance@789",
+    "HOST4": "Finance@321"
 };
 
-if(
-    hosts[dno] &&
-    hosts[dno] === password
-){
+if (hosts[dno] && hosts[dno] === password) {
 
     showScreen("hostScreen");
     updateHostDashboard();
 
     return;
 }
-
 
     /* PARTICIPANT LOGIN */
 
