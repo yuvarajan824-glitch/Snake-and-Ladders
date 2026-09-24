@@ -1,1 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance Club - Money Maze</title>
 
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#071E35;
+    color:#fff;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+/* MONEY BACKGROUND */
+body::before{
+    content:"₹   💰   ₹   🪙   ₹   💵   ₹   💰   ₹";
+    position:fixed;
+    top:10%;
+    left:-5%;
+    width:110%;
+    font-size:70px;
+    letter-spacing:45px;
+    opacity:.035;
+    transform:rotate(-12deg);
+    pointer-events:none;
+    z-index:0;
+}
+
+body::after{
+    content:"💵     ₹     🪙     ₹     💰     ₹";
+    position:fixed;
+    bottom:5%;
+    right:-10%;
+    font-size:65px;
+    letter-spacing:30px;
+    opacity:.035;
+    transform:rotate(10deg);
+    pointer-events:none;
+}
+
+/* COMMON */
+.screen{
+    display:none;
+    min-height:100vh;
+    position:relative;
+    z-index:1;
+}
+
+.active{
+    display:flex;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+}
+
+/* ================= LOGIN ================= */
+
+#loginScreen{
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.login-card{
+    width:420px;
+    max-width:100%;
+    background:rgba(255,255,255,.97);
+    color:#071E35;
+    border-radius:25px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+.logos{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    margin-bottom:20px;
+}
+
+.logos img{
+    width:75px;
+    height:75px;
+    object-fit:contain;
+}
+
+.login-card h1{
+    color:#0D3B5F;
+    font-size:28px;
+    margin-bottom:8px;
+}
+
+.login-card .subtitle{
+    color:#777;
+    margin-bottom:25px;
+}
+
+.input-group{
+    text-align:left;
+    margin-bottom:18px;
+}
+
+.input-group label{
+    font-weight:bold;
+    margin-bottom:7px;
+    display:block;
+}
+
+.input-group input{
+    width:100%;
+    padding:13px;
+    border:2px solid #ddd;
+    border-radius:10px;
+    font-size:16px;
+    outline:none;
+}
+
+.input-group input:focus{
+    border-color:#D4A72C;
+}
+
+.login-btn{
+    width:100%;
+    padding:14px;
+    background:#D4A72C;
+    color:#071E35;
+    border-radius:10px;
+    font-size:17px;
+    font-weight:bold;
+}
+
+.login-btn:hover{
+    background:#e4bc4b;
+}
+
+.login-note{
+    margin-top:15px;
+    font-size:12px;
+    color:#888;
+}
+
+/* ================= WELCOME ================= */
+
+#welcomeScreen{
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.welcome-card{
+    max-width:700px;
+    background:#fff;
+    color:#071E35;
+    padding:45px;
+    border-radius:25px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+.welcome-card h1{
+    color:#0D3B5F;
+    font-size:34px;
+    margin-bottom:20px;
+}
+
+.welcome-text{
+    font-size:18px;
+    line-height:1.7;
+    color:#444;
+}
+
+.salary-box{
+    margin:25px auto;
+    background:#0D3B5F;
+    color:white;
+    padding:18px;
+    border-radius:15px;
+    max-width:350px;
+}
+
+.salary-box span{
+    color:#D4A72C;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.start-btn{
+    background:#16803C;
+    color:white;
+    padding:15px 35px;
+    border-radius:12px;
+    font-size:18px;
+    font-weight:bold;
+}
+
+.start-btn:hover{
+    background:#126b32;
+}
+
+/* ================= GAME ================= */
+
+#gameScreen{
+    display:none;
+    padding:20px;
+}
+
+.game-container{
+    width:1400px;
+    max-width:100%;
+    margin:auto;
+}
+
+.game-header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.game-header h1{
+    font-size:30px;
+    color:#D4A72C;
+}
+
+.game-header p{
+    color:#b8c5d0;
+    margin-top:5px;
+}
+
+.game-layout{
+    display:grid;
+    grid-template-columns:1fr 300px;
+    gap:20px;
+}
+
+/* BOARD */
+
+.board{
+    background:#fff;
+    padding:12px;
+    border-radius:20px;
+    display:grid;
+    grid-template-columns:repeat(10,1fr);
+    gap:5px;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+.cell{
+    min-height:85px;
+    border-radius:9px;
+    background:#edf2f5;
+    color:#071E35;
+    border:2px solid #d9e0e5;
+    padding:5px;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    text-align:center;
+    overflow:hidden;
+}
+
+.cell-number{
+    font-size:12px;
+    font-weight:bold;
+    text-align:left;
+}
+
+.cell-normal{
+    background:#f2f5f7;
+}
+
+.cell-gain{
+    background:#e4f5e9;
+    border-color:#54a96c;
+}
+
+.cell-loss{
+    background:#fde7e5;
+    border-color:#df6b61;
+}
+
+.cell-ladder{
+    background:#fff4cf;
+    border-color:#D4A72C;
+}
+
+.cell-snake{
+    background:#ffe1d6;
+    border-color:#e45d42;
+}
+
+.event-icon{
+    font-size:19px;
+}
+
+.event-name{
+    font-size:10px;
+    font-weight:bold;
+    line-height:1.15;
+}
+
+.event-money{
+    font-size:11px;
+    font-weight:bold;
+}
+
+.gain-money{
+    color:#16803C;
+}
+
+.loss-money{
+    color:#C62828;
+}
+
+.move-text{
+    font-size:9px;
+    font-weight:bold;
+    color:#7a5200;
+}
+
+.player-token{
+    position:absolute;
+    right:4px;
+    top:3px;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#071E35;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:11px;
+    font-weight:bold;
+    border:2px solid #D4A72C;
+}
+
+/* SIDE PANEL */
+
+.finance-panel{
+    background:#fff;
+    color:#071E35;
+    border-radius:20px;
+    padding:22px;
+    height:max-content;
+    position:sticky;
+    top:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,.3);
+}
+
+.finance-panel h2{
+    color:#0D3B5F;
+    margin-bottom:18px;
+}
+
+.financial-row{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid #ddd;
+}
+
+.financial-row span:last-child{
+    font-weight:bold;
+}
+
+.income-value{
+    color:#16803C;
+}
+
+.loss-value{
+    color:#C62828;
+}
+
+.balance-box{
+    margin-top:20px;
+    background:#0D3B5F;
+    color:white;
+    padding:18px;
+    border-radius:14px;
+    text-align:center;
+}
+
+.balance-box small{
+    display:block;
+    color:#bfcbd5;
+}
+
+.balance-box strong{
+    display:block;
+    color:#D4A72C;
+    font-size:30px;
+    margin-top:5px;
+}
+
+.position-box{
+    margin-top:15px;
+    background:#f2f5f7;
+    padding:15px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.dice-area{
+    margin-top:20px;
+    text-align:center;
+}
+
+.dice{
+    width:70px;
+    height:70px;
+    margin:10px auto;
+    border-radius:15px;
+    background:#fff;
+    border:3px solid #0D3B5F;
+    color:#0D3B5F;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    font-weight:bold;
+}
+
+.roll-btn{
+    width:100%;
+    padding:14px;
+    background:#D4A72C;
+    color:#071E35;
+    border-radius:10px;
+    font-size:17px;
+    font-weight:bold;
+}
+
+.roll-btn:disabled{
+    opacity:.5;
+    cursor:not-allowed;
+}
+
+.message-box{
+    margin-top:15px;
+    padding:12px;
+    background:#f7f7f7;
+    border-radius:10px;
+    font-size:13px;
+    line-height:1.4;
+}
+
+/* ================= EVENT POPUP ================= */
+
+.popup{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.65);
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+}
+
+.popup-card{
+    width:420px;
+    max-width:100%;
+    background:#fff;
+    color:#071E35;
+    border-radius:22px;
+    padding:30px;
+    text-align:center;
+    box-shadow:0 20px 70px rgba(0,0,0,.5);
+}
+
+.popup-icon{
+    font-size:55px;
+}
+
+.popup-card h2{
+    margin:10px 0;
+    color:#0D3B5F;
+}
+
+.popup-money{
+    font-size:32px;
+    font-weight:bold;
+    margin:15px 0;
+}
+
+.popup-move{
+    background:#f2f5f7;
+    padding:12px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.popup-btn{
+    background:#0D3B5F;
+    color:white;
+    padding:12px 30px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+/* ================= RESULT ================= */
+
+#resultScreen{
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.result-card{
+    width:600px;
+    max-width:100%;
+    background:white;
+    color:#071E35;
+    border-radius:25px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+.result-card h1{
+    color:#0D3B5F;
+    margin-bottom:20px;
+}
+
+.result-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin:20px 0;
+}
+
+.result-item{
+    background:#f2f5f7;
+    padding:15px;
+    border-radius:12px;
+}
+
+.result-item span{
+    display:block;
+    color:#777;
+    font-size:13px;
+}
+
+.result-item strong{
+    display:block;
+    font-size:20px;
+    margin-top:5px;
+}
+
+.final-balance{
+    background:#0D3B5F;
+    color:#fff;
+    padding:20px;
+    border-radius:15px;
+}
+
+.final-balance strong{
+    display:block;
+    color:#D4A72C;
+    font-size:35px;
+    margin-top:5px;
+}
+
+.learning-message{
+    margin:20px 0;
+    padding:18px;
+    border-radius:12px;
+    line-height:1.5;
+}
+
+.good{
+    background:#e4f5e9;
+    color:#126b32;
+}
+
+.need-learning{
+    background:#fff0e8;
+    color:#9c3b20;
+}
+
+.finish-btn{
+    background:#16803C;
+    color:white;
+    padding:13px 30px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+/* ================= HOST ================= */
+
+#hostScreen{
+    display:none;
+    padding:25px;
+}
+
+.host-container{
+    max-width:1400px;
+    margin:auto;
+}
+
+.host-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.host-header h1{
+    color:#D4A72C;
+}
+
+.host-badge{
+    background:#16803C;
+    padding:8px 15px;
+    border-radius:20px;
+    font-size:13px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.stat-card{
+    background:white;
+    color:#071E35;
+    padding:20px;
+    border-radius:15px;
+    box-shadow:0 8px 25px rgba(0,0,0,.2);
+}
+
+.stat-card small{
+    color:#777;
+}
+
+.stat-card strong{
+    display:block;
+    font-size:30px;
+    color:#0D3B5F;
+    margin-top:5px;
+}
+
+.leaderboard{
+    background:white;
+    color:#071E35;
+    border-radius:18px;
+    padding:20px;
+    overflow-x:auto;
+}
+
+.leaderboard h2{
+    margin-bottom:15px;
+    color:#0D3B5F;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,td{
+    padding:13px 10px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+    white-space:nowrap;
+}
+
+th{
+    background:#0D3B5F;
+    color:white;
+}
+
+.status-playing{
+    color:#16803C;
+    font-weight:bold;
+}
+
+.status-finished{
+    color:#0D3B5F;
+    font-weight:bold;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+    .game-layout{
+        grid-template-columns:1fr;
+    }
+
+    .finance-panel{
+        position:relative;
+        top:0;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr;
+    }
+}
+
+@media(max-width:600px){
+    .board{
+        gap:2px;
+        padding:5px;
+    }
+
+    .cell{
+        min-height:58px;
+        padding:3px;
+    }
+
+    .event-icon{
+        font-size:13px;
+    }
+
+    .event-name{
+        font-size:7px;
+    }
+
+    .event-money{
+        font-size:8px;
+    }
+
+    .cell-number{
+        font-size:8px;
+    }
+
+    .logos img{
+        width:55px;
+        height:55px;
+    }
+
+    .welcome-card{
+        padding:25px;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    .result-grid{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= LOGIN ================= -->
+
+<section id="loginScreen" class="screen active">
+
+    <div class="login-card">
+
+        <div class="logos">
+            <img src="clglogo.png" alt="College Logo">
+            <img src="clublogo.png" alt="Finance Club Logo">
+        </div>
+
+        <h1>Finance Club</h1>
+        <p class="subtitle">Financial Journey – Snake & Ladder</p>
+
+        <div class="input-group">
+            <label>D.No</label>
+            <input type="text" id="dno" placeholder="Example: 25PBA241">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter your D.No">
+        </div>
+
+        <button class="login-btn" onclick="login()">
+            LOGIN
+        </button>
+
+        <p class="login-note">
+            Participant password = D.No
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- ================= WELCOME ================= -->
+
+<section id="welcomeScreen" class="screen">
+
+    <div class="welcome-card">
+
+        <h1>Hey Buddy! 👋</h1>
+
+        <p class="welcome-text">
+            You are now starting your financial journey with a monthly salary of
+            <b>₹75,000</b>.<br><br>
+
+            You have to manage your money while facing the obstacles ahead.
+            There will be some extra income 💰, some unexpected losses 😂,
+            and a few financial surprises!<br><br>
+
+            Play carefully — every financial decision matters.
+            Think of this as a small training for your future financial life. 🚀
+        </p>
+
+        <div class="salary-box">
+            Starting Monthly Salary
+            <span>₹75,000</span>
+        </div>
+
+        <button class="start-btn" onclick="startGame()">
+            → LET'S GO
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= GAME ================= -->
+
+<section id="gameScreen" class="screen">
+
+    <div class="game-container">
+
+        <div class="game-header">
+            <h1>💰 FINANCIAL MONEY MAZE</h1>
+            <p>Roll the dice. Manage your money. Reach Box 100.</p>
+        </div>
+
+        <div class="game-layout">
+
+            <div class="board" id="board"></div>
+
+            <div class="finance-panel">
+
+                <h2>💰 YOUR FINANCES</h2>
+
+                <div class="financial-row">
+                    <span>Starting</span>
+                    <span>₹75,000</span>
+                </div>
+
+                <div class="financial-row">
+                    <span>Total Income</span>
+                    <span class="income-value" id="income">₹0</span>
+                </div>
+
+                <div class="financial-row">
+                    <span>Total Loss</span>
+                    <span class="loss-value" id="loss">₹0</span>
+                </div>
+
+                <div class="balance-box">
+                    <small>Current Balance</small>
+                    <strong id="balance">₹75,000</strong>
+                </div>
+
+                <div class="position-box">
+                    📍 Position:
+                    <b id="position">Box 1</b>
+                </div>
+
+                <div class="dice-area">
+
+                    <div class="dice" id="dice">⚀</div>
+
+                    <button class="roll-btn" id="rollBtn" onclick="rollDice()">
+                        🎲 ROLL DICE
+                    </button>
+
+                </div>
+
+                <div class="message-box" id="gameMessage">
+                    Roll the dice to begin your financial journey!
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= EVENT POPUP ================= -->
+
+<div class="popup" id="eventPopup">
+
+    <div class="popup-card">
+
+        <div class="popup-icon" id="popupIcon">💰</div>
+
+        <h2 id="popupTitle">Financial Event</h2>
+
+        <p id="popupDescription"></p>
+
+        <div class="popup-money" id="popupMoney"></div>
+
+        <div class="popup-move" id="popupMove"></div>
+
+        <button class="popup-btn" onclick="closePopup()">
+            CONTINUE →
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ================= RESULT ================= -->
+
+<section id="resultScreen" class="screen">
+
+    <div class="result-card">
+
+        <h1>🎉 Financial Journey Complete!</h1>
+
+        <p>
+            D.No: <b id="resultDno"></b>
+        </p>
+
+        <div class="result-grid">
+
+            <div class="result-item">
+                <span>Starting Balance</span>
+                <strong>₹75,000</strong>
+            </div>
+
+            <div class="result-item">
+                <span>Total Income</span>
+                <strong class="income-value" id="resultIncome">
+                    ₹0
+                </strong>
+            </div>
+
+            <div class="result-item">
+                <span>Total Loss</span>
+                <strong class="loss-value" id="resultLoss">
+                    ₹0
+                </strong>
+            </div>
+
+            <div class="result-item">
+                <span>Final Position</span>
+                <strong>Box 100</strong>
+            </div>
+
+        </div>
+
+        <div class="final-balance">
+
+            Final Balance
+
+            <strong id="resultBalance">
+                ₹75,000
+            </strong>
+
+        </div>
+
+        <div class="learning-message" id="learningMessage"></div>
+
+        <button class="finish-btn" onclick="finishGame()">
+            FINISH ✓
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- ================= HOST ================= -->
+
+<section id="hostScreen" class="screen">
+
+    <div class="host-container">
+
+        <div class="host-header">
+
+            <div>
+                <h1>💰 Finance Club – Host Dashboard</h1>
+                <p>Live Participant Leaderboard</p>
+            </div>
+
+            <div class="host-badge">
+                ● LIVE
+            </div>
+
+        </div>
+
+        <div class="stats">
+
+            <div class="stat-card">
+                <small>Total Joined</small>
+                <strong id="totalJoined">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <small>Currently Playing</small>
+                <strong id="currentlyPlaying">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <small>Finished</small>
+                <strong id="finished">0</strong>
+            </div>
+
+            <div class="stat-card">
+                <small>Average Balance</small>
+                <strong id="averageBalance">₹0</strong>
+            </div>
+
+        </div>
+
+        <div class="leaderboard">
+
+            <h2>🏆 LIVE LEADERBOARD</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>D.No</th>
+                        <th>Status</th>
+                        <th>Position</th>
+                        <th>Income</th>
+                        <th>Loss</th>
+                        <th>Balance</th>
+                    </tr>
+                </thead>
+
+                <tbody id="leaderboardBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<script>
+
+/* =====================================================
+   GAME DATA
+===================================================== */
+
+const STARTING_BALANCE = 75000;
+
+let currentDno = "";
+let position = 1;
+let balance = STARTING_BALANCE;
+let totalIncome = 0;
+let totalLoss = 0;
+let gameFinished = false;
+
+
+/* =====================================================
+   FINANCIAL EVENTS
+===================================================== */
+
+const events = {
+
+    2:  ["gain", "💰", "Cashback Received", 500],
+    4:  ["loss", "📱", "Mobile Bill", 700],
+    6:  ["gain", "💼", "Freelance Income", 2000],
+    8:  ["loss", "🍔", "Dining Out", 1200],
+
+    12: ["gain", "🏦", "Bank Interest", 800],
+    14: ["loss", "💡", "Electricity Bill", 1000],
+    16: ["gain", "🎯", "Performance Incentive", 2500],
+    18: ["loss", "⛽", "Fuel Expense", 1000],
+
+    20: ["gain", "📈", "Investment Return", 2000],
+    22: ["loss", "🛒", "Online Shopping", 1500],
+
+    26: ["gain", "💼", "Salary Increment", 3000],
+    28: ["loss", "🏍️", "Bike Repair", 3000],
+
+    30: ["gain", "💸", "Refund Received", 1000],
+    32: ["loss", "💳", "EMI Payment", 2500],
+
+    34: ["gain", "🏦", "FD Interest", 1500],
+    36: ["loss", "🏥", "Medical Expense", 3500],
+
+    40: ["gain", "🎁", "Festival Bonus", 3000],
+    42: ["loss", "💳", "Credit Card Bill", 2000],
+
+    44: ["gain", "📊", "Investment Profit", 3500],
+    46: ["loss", "💻", "Laptop Repair", 2500],
+
+    50: ["gain", "🏆", "Savings Reward", 1500],
+    52: ["loss", "✈️", "Unexpected Travel", 2000],
+
+    54: ["gain", "💼", "Side Income", 2500],
+    56: ["loss", "⚠️", "Late Payment Penalty", 1500],
+
+    60: ["gain", "💰", "Dividend Received", 2000],
+    62: ["loss", "🛡️", "Insurance Premium", 2500],
+
+    64: ["gain", "🏢", "Employer Bonus", 4000],
+    66: ["loss", "🏍️", "Major Bike Breakdown", 4000],
+
+    68: ["gain", "🏦", "Interest Income", 2500],
+    70: ["gain", "📈", "Smart Investment", 4000],
+
+    72: ["loss", "🛍️", "Impulse Purchase", 2000],
+    74: ["gain", "💸", "Tax Refund", 3000],
+
+    76: ["loss", "🚨", "Emergency Expense", 4000],
+
+    80: ["gain", "💰", "Salary Bonus", 5000],
+    82: ["loss", "💳", "Heavy EMI Burden", 3000],
+
+    84: ["gain", "🏦", "Interest Income", 2500],
+    86: ["loss", "🚗", "Vehicle Repair", 5000],
+
+    90: ["gain", "📈", "Investment Return", 5000],
+    92: ["loss", "🛒", "Unplanned Shopping", 2500],
+
+    94: ["gain", "🏆", "Performance Bonus", 4000],
+    96: ["loss", "🏥", "Medical Emergency", 5000]
+};
+
+
+/* =====================================================
+   LADDERS
+===================================================== */
+
+const ladders = {
+
+    6:17,
+    20:38,
+    28:55,
+    44:69,
+    54:76,
+    64:82,
+    70:91
+
+};
+
+
+/* =====================================================
+   SNAKES
+===================================================== */
+
+const snakes = {
+
+    32:14,
+    48:26,
+    66:41,
+    78:57,
+    86:63,
+    96:73
+
+};
+
+
+/* =====================================================
+   LOGIN
+===================================================== */
+
+function login(){
+
+    const dno = document.getElementById("dno").value
+        .trim()
+        .toUpperCase();
+
+    const password = document.getElementById("password").value
+        .trim()
+        .toUpperCase();
+
+    /* HOST LOGIN */
+
+    if(
+        dno === "HOST_D.NO" &&
+        password === "HOST_D.NO"
+    ){
+
+        showScreen("hostScreen");
+        updateHostDashboard();
+
+        return;
+    }
+
+
+    /* PARTICIPANT LOGIN */
+
+    const validDno = /^\d{2}PBA\d{3}$/;
+
+    if(!validDno.test(dno)){
+
+        alert(
+            "Please enter a valid D.No.\nExample: 25PBA241"
+        );
+
+        return;
+    }
+
+
+    if(password !== dno){
+
+        alert("Password must be the same as your D.No.");
+
+        return;
+    }
+
+
+    currentDno = dno;
+
+    showScreen("welcomeScreen");
+
+}
+
+
+/* =====================================================
+   SCREEN SWITCH
+===================================================== */
+
+function showScreen(id){
+
+    document.querySelectorAll(".screen").forEach(screen => {
+
+        screen.classList.remove("active");
+        screen.style.display = "none";
+
+    });
+
+    const screen = document.getElementById(id);
+
+    screen.classList.add("active");
+
+    if(id === "loginScreen"){
+        screen.style.display = "flex";
+    }
+    else if(id === "welcomeScreen"){
+        screen.style.display = "flex";
+    }
+    else if(id === "resultScreen"){
+        screen.style.display = "flex";
+    }
+    else{
+        screen.style.display = "block";
+    }
+}
+
+
+/* =====================================================
+   START GAME
+===================================================== */
+
+function startGame(){
+
+    position = 1;
+    balance = STARTING_BALANCE;
+    totalIncome = 0;
+    totalLoss = 0;
+    gameFinished = false;
+
+    document.getElementById("income").innerText = "₹0";
+    document.getElementById("loss").innerText = "₹0";
+    document.getElementById("balance").innerText = "₹75,000";
+    document.getElementById("position").innerText = "Box 1";
+
+    document.getElementById("gameMessage").innerText =
+        "Your journey begins! Roll the dice.";
+
+    document.getElementById("rollBtn").disabled = false;
+
+    createBoard();
+
+    showScreen("gameScreen");
+
+    updatePlayerToken();
+
+}
+
+
+/* =====================================================
+   CREATE BOARD
+===================================================== */
+
+function createBoard(){
+
+    const board = document.getElementById("board");
+
+    board.innerHTML = "";
+
+    /*
+       Snake & ladder board arrangement
+       Alternates direction every row.
+    */
+
+    for(let row = 9; row >= 0; row--){
+
+        let numbers = [];
+
+        const start = row * 10 + 1;
+        const end = start + 9;
+
+        for(let n = start; n <= end; n++){
+            numbers.push(n);
+        }
+
+        if((9-row) % 2 === 1){
+            numbers.reverse();
+        }
+
+        numbers.forEach(num => {
+
+            const cell = document.createElement("div");
+
+            cell.classList.add("cell");
+
+            const number = document.createElement("div");
+
+            number.className = "cell-number";
+
+            number.innerText = num;
+
+            cell.appendChild(number);
+
+
+            /* EVENT */
+
+            if(events[num]){
+
+                const event = events[num];
+
+                cell.classList.add(
+                    event[0] === "gain"
+                    ? "cell-gain"
+                    : "cell-loss"
+                );
+
+                const icon = document.createElement("div");
+
+                icon.className = "event-icon";
+                icon.innerText = event[1];
+
+                const name = document.createElement("div");
+
+                name.className = "event-name";
+                name.innerText = event[2];
+
+                const money = document.createElement("div");
+
+                money.className =
+                    "event-money " +
+                    (
+                        event[0] === "gain"
+                        ? "gain-money"
+                        : "loss-money"
+                    );
+
+                money.innerText =
+                    event[0] === "gain"
+                    ? "+₹" + event[3].toLocaleString()
+                    : "−₹" + event[3].toLocaleString();
+
+                cell.appendChild(icon);
+                cell.appendChild(name);
+                cell.appendChild(money);
+
+            }
+
+
+            /* LADDER */
+
+            if(ladders[num]){
+
+                cell.classList.remove("cell-gain");
+                cell.classList.add("cell-ladder");
+
+                const icon = document.createElement("div");
+
+                icon.className = "event-icon";
+                icon.innerText = "🪜";
+
+                const name = document.createElement("div");
+
+                name.className = "event-name";
+                name.innerText = "FINANCIAL OPPORTUNITY";
+
+                const move = document.createElement("div");
+
+                move.className = "move-text";
+
+                move.innerText =
+                    "Move → " + ladders[num];
+
+                cell.appendChild(icon);
+                cell.appendChild(name);
+                cell.appendChild(move);
+
+            }
+
+
+            /* SNAKE */
+
+            if(snakes[num]){
+
+                cell.classList.remove("cell-loss");
+                cell.classList.add("cell-snake");
+
+                const icon = document.createElement("div");
+
+                icon.className = "event-icon";
+                icon.innerText = "🐍";
+
+                const name = document.createElement("div");
+
+                name.className = "event-name";
+                name.innerText = "FINANCIAL SETBACK";
+
+                const move = document.createElement("div");
+
+                move.className = "move-text";
+
+                move.innerText =
+                    "Move → " + snakes[num];
+
+                cell.appendChild(icon);
+                cell.appendChild(name);
+                cell.appendChild(move);
+
+            }
+
+
+            board.appendChild(cell);
+
+        });
+
+    }
+
+}
+
+
+/* =====================================================
+   ROLL DICE
+===================================================== */
+
+function rollDice(){
+
+    if(gameFinished) return;
+
+    const button = document.getElementById("rollBtn");
+
+    button.disabled = true;
+
+    const diceValue =
+        Math.floor(Math.random() * 6) + 1;
+
+    const diceFaces = [
+        "⚀",
+        "⚁",
+        "⚂",
+        "⚃",
+        "⚄",
+        "⚅"
+    ];
+
+    document.getElementById("dice").innerText =
+        diceFaces[diceValue - 1];
+
+
+    let newPosition = position + diceValue;
+
+
+    /* CANNOT CROSS 100 */
+
+    if(newPosition > 100){
+
+        document.getElementById("gameMessage").innerText =
+            "You need an exact roll to reach Box 100.";
+
+        button.disabled = false;
+
+        return;
+    }
+
+
+    position = newPosition;
+
+    updatePlayerToken();
+
+    setTimeout(() => {
+
+        processBox();
+
+    }, 500);
+
+}
+
+
+/* =====================================================
+   PROCESS BOX
+===================================================== */
+
+function processBox(){
+
+    let eventOccurred = false;
+
+    let popupIcon = "📍";
+    let popupTitle = "Normal Move";
+    let popupDescription = "No financial event on this box.";
+    let popupMoney = "";
+    let popupMove = "You remain on Box " + position;
+
+
+    /* FINANCIAL EVENT */
+
+    if(events[position]){
+
+        eventOccurred = true;
+
+        const event = events[position];
+
+        if(event[0] === "gain"){
+
+            balance += event[3];
+            totalIncome += event[3];
+
+            popupIcon = event[1];
+            popupTitle = event[2];
+
+            popupDescription =
+                "You received extra income!";
+
+            popupMoney =
+                "+₹" + event[3].toLocaleString();
+
+        }
+        else{
+
+            balance -= event[3];
+            totalLoss += event[3];
+
+            popupIcon = event[1];
+            popupTitle = event[2];
+
+            popupDescription =
+                "You have to pay this expense.";
+
+            popupMoney =
+                "−₹" + event[3].toLocaleString();
+
+        }
+
+    }
+
+
+    /* LADDER */
+
+    if(ladders[position]){
+
+        const oldPosition = position;
+
+        position = ladders[position];
+
+        popupIcon = "🪜";
+        popupTitle = "Financial Opportunity!";
+        popupDescription =
+            "Great financial decision! Move forward.";
+
+        popupMove =
+            "Box " + oldPosition +
+            " → Box " + position;
+
+    }
+
+
+    /* SNAKE */
+
+    if(snakes[position]){
+
+        const oldPosition = position;
+
+        /*
+           Snake also creates financial loss
+           if the box doesn't already have one.
+        */
+
+        const snakeLoss = 2000;
+
+        balance -= snakeLoss;
+        totalLoss += snakeLoss;
+
+        position = snakes[position];
+
+        popupIcon = "🐍";
+        popupTitle = "Financial Setback!";
+        popupDescription =
+            "Unexpected financial trouble!";
+
+        popupMoney =
+            "−₹" + snakeLoss.toLocaleString();
+
+        popupMove =
+            "Box " + oldPosition +
+            " → Box " + position;
+
+    }
+
+
+    updateFinance();
+
+    updatePlayerToken();
+
+
+    /* POPUP */
+
+    if(
+        eventOccurred ||
+        ladders[position] ||
+        snakes[position]
+    ){
+
+        document.getElementById("popupIcon").innerText =
+            popupIcon;
+
+        document.getElementById("popupTitle").innerText =
+            popupTitle;
+
+        document.getElementById("popupDescription").innerText =
+            popupDescription;
+
+        document.getElementById("popupMoney").innerText =
+            popupMoney;
+
+        document.getElementById("popupMove").innerText =
+            popupMove;
+
+        document.getElementById("eventPopup").style.display =
+            "flex";
+
+    }
+    else{
+
+        document.getElementById("gameMessage").innerText =
+            "You moved to Box " + position +
+            ". Keep going!";
+
+        document.getElementById("rollBtn").disabled = false;
+
+    }
+
+
+    /* WIN */
+
+    if(position === 100){
+
+        setTimeout(() => {
+
+            closePopup();
+
+            finishJourney();
+
+        }, 700);
+
+    }
+
+}
+
+
+/* =====================================================
+   CLOSE POPUP
+===================================================== */
+
+function closePopup(){
+
+    document.getElementById("eventPopup").style.display =
+        "none";
+
+    if(position !== 100 && !gameFinished){
+
+        document.getElementById("rollBtn").disabled = false;
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE FINANCE
+===================================================== */
+
+function updateFinance(){
+
+    document.getElementById("income").innerText =
+        "₹" + totalIncome.toLocaleString();
+
+    document.getElementById("loss").innerText =
+        "₹" + totalLoss.toLocaleString();
+
+    document.getElementById("balance").innerText =
+        "₹" + balance.toLocaleString();
+
+    document.getElementById("position").innerText =
+        "Box " + position;
+
+}
+
+
+/* =====================================================
+   UPDATE PLAYER TOKEN
+===================================================== */
+
+function updatePlayerToken(){
+
+    document.querySelectorAll(".player-token")
+        .forEach(token => token.remove());
+
+    const board = document.getElementById("board");
+
+    const cells = board.querySelectorAll(".cell");
+
+    /*
+       Board cells are displayed in snake pattern.
+       Find the cell based on its number.
+    */
+
+    cells.forEach(cell => {
+
+        const number =
+            parseInt(
+                cell.querySelector(".cell-number").innerText
+            );
+
+        if(number === position){
+
+            const token =
+                document.createElement("div");
+
+            token.className = "player-token";
+
+            token.innerText = "YOU";
+
+            cell.appendChild(token);
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   FINISH JOURNEY
+===================================================== */
+
+function finishJourney(){
+
+    gameFinished = true;
+
+    document.getElementById("resultDno").innerText =
+        currentDno;
+
+    document.getElementById("resultIncome").innerText =
+        "₹" + totalIncome.toLocaleString();
+
+    document.getElementById("resultLoss").innerText =
+        "₹" + totalLoss.toLocaleString();
+
+    document.getElementById("resultBalance").innerText =
+        "₹" + balance.toLocaleString();
+
+
+    const learning =
+        document.getElementById("learningMessage");
+
+
+    if(balance >= 25000){
+
+        learning.className =
+            "learning-message good";
+
+        learning.innerHTML =
+            "🎉 <b>Well Done!</b><br>" +
+            "You managed your money reasonably well and " +
+            "maintained a financial cushion despite facing " +
+            "different income opportunities and unexpected expenses.";
+
+    }
+    else{
+
+        learning.className =
+            "learning-message need-learning";
+
+        learning.innerHTML =
+            "📚 <b>More to Learn!</b><br>" +
+            "This journey shows the importance of saving, " +
+            "budgeting, emergency planning and making careful " +
+            "financial decisions.";
+
+    }
+
+
+    saveResult();
+
+    showScreen("resultScreen");
+
+}
+
+
+/* =====================================================
+   FINISH BUTTON
+===================================================== */
+
+function finishGame(){
+
+    showScreen("loginScreen");
+
+    document.getElementById("dno").value = "";
+    document.getElementById("password").value = "";
+
+}
+
+
+/* =====================================================
+   DEMO LEADERBOARD STORAGE
+===================================================== */
+
+let participants = [];
+
+
+/* =====================================================
+   SAVE PARTICIPANT RESULT
+===================================================== */
+
+function saveResult(){
+
+    const existing =
+        participants.find(
+            p => p.dno === currentDno
+        );
+
+
+    const result = {
+
+        dno: currentDno,
+        status: "Finished",
+        position: 100,
+        income: totalIncome,
+        loss: totalLoss,
+        balance: balance
+
+    };
+
+
+    if(existing){
+
+        Object.assign(existing, result);
+
+    }
+    else{
+
+        participants.push(result);
+
+    }
+
+
+    updateHostDashboard();
+
+}
+
+
+/* =====================================================
+   HOST DASHBOARD
+===================================================== */
+
+function updateHostDashboard(){
+
+    const total =
+        participants.length;
+
+    const finished =
+        participants.filter(
+            p => p.status === "Finished"
+        ).length;
+
+    const playing =
+        participants.filter(
+            p => p.status === "Playing"
+        ).length;
+
+
+    const average =
+        total === 0
+        ? 0
+        : participants.reduce(
+            (sum,p) => sum + p.balance,
+            0
+        ) / total;
+
+
+    document.getElementById("totalJoined").innerText =
+        total;
+
+    document.getElementById("currentlyPlaying").innerText =
+        playing;
+
+    document.getElementById("finished").innerText =
+        finished;
+
+    document.getElementById("averageBalance").innerText =
+        "₹" + Math.round(average).toLocaleString();
+
+
+    const body =
+        document.getElementById("leaderboardBody");
+
+    body.innerHTML = "";
+
+
+    const sorted =
+        [...participants].sort(
+            (a,b) => b.balance - a.balance
+        );
+
+
+    sorted.forEach((p,index) => {
+
+        const row =
+            document.createElement("tr");
+
+
+        row.innerHTML = `
+
+            <td>${index + 1}</td>
+
+            <td><b>${p.dno}</b></td>
+
+            <td class="${
+                p.status === "Finished"
+                ? "status-finished"
+                : "status-playing"
+            }">
+
+                ${
+                    p.status === "Finished"
+                    ? "✅ Finished"
+                    : "🟢 Playing"
+                }
+
+            </td>
+
+            <td>Box ${p.position}</td>
+
+            <td class="income-value">
+                ₹${p.income.toLocaleString()}
+            </td>
+
+            <td class="loss-value">
+                ₹${p.loss.toLocaleString()}
+            </td>
+
+            <td>
+                <b>
+                    ₹${p.balance.toLocaleString()}
+                </b>
+            </td>
+
+        `;
+
+        body.appendChild(row);
+
+    });
+
+}
+
+
+/* =====================================================
+   END
+===================================================== */
+
+</script>
+
+</body>
+</html>
