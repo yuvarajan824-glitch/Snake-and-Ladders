@@ -1188,18 +1188,24 @@ function login(){
         .trim()
         .toUpperCase();
 
-    /* HOST LOGIN */
+   /* HOST LOGINS */
 
-    if(
-        dno === "HOST_D.NO" &&
-        password === "HOST_D.NO"
-    ){
+const hosts = {
+    "HOST1": "Finance@123",
+    "HOST2": "Finance@456",
+    "HOST3": "Finance@789"
+};
 
-        showScreen("hostScreen");
-        updateHostDashboard();
+if(
+    hosts[dno] &&
+    hosts[dno] === password
+){
 
-        return;
-    }
+    showScreen("hostScreen");
+    updateHostDashboard();
+
+    return;
+}
 
 
     /* PARTICIPANT LOGIN */
